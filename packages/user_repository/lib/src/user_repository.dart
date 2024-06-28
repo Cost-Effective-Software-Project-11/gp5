@@ -1,16 +1,27 @@
-import 'dart:async';
-
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:logger/logger.dart';
 import 'package:user_repository/src/models/models.dart';
-import 'package:uuid/uuid.dart';
 
 class UserRepository {
-  User? _user;
+  final FirebaseFirestore _firestore;
+  final Logger _logger = Logger();
 
-  Future<User?> getUser() async {
-    if (_user != null) return _user;
-    return Future.delayed(
-      const Duration(milliseconds: 300),
-          () => _user = User(const Uuid().v4()),
-    );
+  UserRepository({FirebaseFirestore? firestore})
+      : _firestore = firestore ?? FirebaseFirestore.instance;
+
+  Future<User?> getUser(String id) async {
+    try {
+      final doc = await _firestore.collection('users').doc(id).get();
+      if (doc.exists) {
+        return User.fromMap(doc.data()!);
+      } else {
+        _logger.w('User with id $id does not exist.');
+      }
+    } on FirebaseException catch (e) {
+      _logger.e('FirebaseException: ${e.message}');
+    } catch (e) {
+      _logger.e('Exception: $e');
+    }
+    return null;
   }
 }

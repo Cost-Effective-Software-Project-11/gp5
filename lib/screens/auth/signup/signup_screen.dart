@@ -32,6 +32,7 @@ class _SignupScreenState extends State<_SignupScreen> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _confirmPasswordController = TextEditingController();
+  final FocusNode _usernameFocusNode = FocusNode();
   final FocusNode _emailFocusNode = FocusNode();
   final FocusNode _passwordFocusNode = FocusNode();
   final FocusNode _confirmPasswordFocusNode = FocusNode();
@@ -43,6 +44,7 @@ class _SignupScreenState extends State<_SignupScreen> {
     _emailController.dispose();
     _passwordController.dispose();
     _confirmPasswordController.dispose();
+    _usernameFocusNode.dispose();
     _emailFocusNode.dispose();
     _passwordFocusNode.dispose();
     _confirmPasswordFocusNode.dispose();
@@ -99,6 +101,7 @@ class _SignupScreenState extends State<_SignupScreen> {
   Widget _usernameTextFormField() {
     return TextFormField(
       controller: _usernameController,
+      focusNode: _usernameFocusNode,
       decoration: const InputDecoration(labelText: 'Username'),
       keyboardType: TextInputType.text,
       validator: (value) {
@@ -180,7 +183,11 @@ class _SignupScreenState extends State<_SignupScreen> {
 
   void _submitForm() {
     if (_formKey.currentState!.validate()) {
-      context.read<SignupBloc>().add(const SignupSubmitted());
+      context.read<SignupBloc>().add(SignupSubmitted(
+        username: _usernameController.text,
+        email: _emailController.text,
+        password: _passwordController.text,
+      ));
     }
   }
 }

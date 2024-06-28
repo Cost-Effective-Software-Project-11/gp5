@@ -8,3 +8,6 @@ environment:
 dependencies:
   equatable: ^2.0.0
   uuid: ^3.0.0
+  firebase_auth: ^4.17.7
+  cloud_firestore: ^4.1.0
+  logger: ^2.3.0

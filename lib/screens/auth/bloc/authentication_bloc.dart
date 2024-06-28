@@ -10,8 +10,7 @@ import '../../../enums/authentication_status_enum.dart';
 part 'authentication_event.dart';
 part 'authentication_state.dart';
 
-class AuthenticationBloc
-    extends Bloc<AuthenticationEvent, AuthenticationState> {
+class AuthenticationBloc extends Bloc<AuthenticationEvent, AuthenticationState> {
   AuthenticationBloc({
     required AuthenticationRepository authenticationRepository,
     required UserRepository userRepository,
@@ -20,12 +19,15 @@ class AuthenticationBloc
         super(const AuthenticationState.unknown()) {
     on<_AuthenticationStatusChanged>(_onAuthenticationStatusChanged);
     on<AuthenticationLogoutRequested>(_onAuthenticationLogoutRequested);
+
+    _authenticationStatusSubscription = _authenticationRepository.status.listen(
+          (status) => add(_AuthenticationStatusChanged(status as AuthenticationStatus)),
+    ) as StreamSubscription<AuthenticationStatus>;
   }
 
   final AuthenticationRepository _authenticationRepository;
   final UserRepository _userRepository;
-  late StreamSubscription<AuthenticationStatus>
-  _authenticationStatusSubscription;
+  late StreamSubscription<AuthenticationStatus> _authenticationStatusSubscription;
 
   @override
   Future<void> close() {
@@ -39,16 +41,19 @@ class AuthenticationBloc
       ) async {
     switch (event.status) {
       case AuthenticationStatus.unauthenticated:
-        return emit(const AuthenticationState.unauthenticated());
+        emit(const AuthenticationState.unauthenticated());
+        break;
       case AuthenticationStatus.authenticated:
         final user = await _tryGetUser();
-        return emit(
+        emit(
           user != null
               ? AuthenticationState.authenticated(user)
               : const AuthenticationState.unauthenticated(),
         );
-      case AuthenticationStatus.unknown:
-        return emit(const AuthenticationState.unknown());
+        break;
+      default:
+        emit(const AuthenticationState.unknown());
+        break;
     }
   }
 
@@ -60,11 +65,15 @@ class AuthenticationBloc
   }
 
   Future<User?> _tryGetUser() async {
-    try {
-      final user = await _userRepository.getUser();
-      return user;
-    } catch (_) {
-      return null;
+    final currentUser = _authenticationRepository.currentUser;
+    if (currentUser != null) {
+      try {
+        final user = await _userRepository.getUser(currentUser.uid);
+        return user;
+      } catch (_) {
+        return null;
+      }
     }
+    return null;
   }
 }

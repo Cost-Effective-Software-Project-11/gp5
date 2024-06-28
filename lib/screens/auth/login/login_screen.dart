@@ -112,11 +112,10 @@ class _LoginScreenState extends State<_LoginScreen> {
   Widget _buildLoginButton() {
     return BlocBuilder<LoginBloc, LoginState>(
       builder: (context, state) {
-        return StatusEnum.inProgress == state.status
+        return state.status == StatusEnum.inProgress
             ? const CircularProgressIndicator()
             : ElevatedButton(
           key: const Key('loginForm_continue_raisedButton'),
-          //onPressed: state.isValid ? _submitForm : null,
           onPressed: _submitForm,
           child: const Text('Login'),
         );
@@ -135,6 +134,9 @@ class _LoginScreenState extends State<_LoginScreen> {
           return 'Please enter a username';
         }
         return null;
+      },
+      onChanged: (value) {
+        context.read<LoginBloc>().add(LoginUsernameChanged(value));
       },
     );
   }
@@ -161,13 +163,15 @@ class _LoginScreenState extends State<_LoginScreen> {
         }
         return null;
       },
+      onChanged: (value) {
+        context.read<LoginBloc>().add(LoginPasswordChanged(value));
+      },
     );
   }
 
   Widget _forgotPassword() {
     return TextButton(
-      onPressed: () {
-      },
+      onPressed: () {},
       child: const Text('Forgot Password?'),
     );
   }

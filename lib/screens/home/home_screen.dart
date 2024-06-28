@@ -1,24 +1,28 @@
+import 'package:authentication_repository/authentication_repository.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_gp5/locale/l10n/app_locale.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_gp5/routes/app_routes.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
 
-  static const double _dividerThickness = 2.0;
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(
-          //use localization
-          'Home Screen: ${AppLocale.of(context)!.title}',
-          style: const TextStyle(color: Colors.white),
-        ),
+        title: Text('Home Screen'),
         backgroundColor: Colors.teal.shade600,
         centerTitle: true,
         elevation: 4.00,
+        actions: [
+          IconButton(
+            icon: Icon(Icons.logout),
+            onPressed: () async {
+              await context.read<AuthenticationRepository>().logOut();
+              Navigator.pushReplacementNamed(context, AppRoutes.login);
+            },
+          ),
+        ],
       ),
       body: Container(
         decoration: BoxDecoration(
@@ -29,25 +33,13 @@ class HomeScreen extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             _buildTrialsButton(context),
-            _customDivider(
-              thickness: _dividerThickness,
-            ),
-            // Add validation if the user is a doctor to see this button:
+            _customDivider(thickness: 2.0),
             _buildCreateTrialsButton(context),
-            _customDivider(
-              thickness: _dividerThickness,
-            ),
-            // Add Help Button here:
+            _customDivider(thickness: 2.0),
             const Text("Help", textAlign: TextAlign.center),
-            _customDivider(
-              thickness: _dividerThickness,
-            ),
-            // Add Setting Button here:
+            _customDivider(thickness: 2.0),
             _buildSettingsButton(context),
-            _customDivider(
-              thickness: _dividerThickness,
-            ),
-            // Add Info Button here:
+            _customDivider(thickness: 2.0),
             const Text("Info", textAlign: TextAlign.center),
           ],
         ),
@@ -79,7 +71,7 @@ class HomeScreen extends StatelessWidget {
         Navigator.pushNamed(context, AppRoutes.appSettings);
       },
       child: Text(
-        AppLocale.of(context)!.settingsTitle,
+        'Settings',
         style: TextStyle(
           fontSize: 20,
           inherit: true,
@@ -109,7 +101,6 @@ class HomeScreen extends StatelessWidget {
     );
   }
 
-  // Custom divider
   Divider _customDivider({
     double thickness = 0.0,
     Color color = Colors.black,

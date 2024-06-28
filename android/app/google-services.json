@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "886581177450",
+    "project_id": "gp5-firebase-60ae9",
+    "storage_bucket": "gp5-firebase-60ae9.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:886581177450:android:0e301a2614da3e73522e13",
+        "android_client_info": {
+          "package_name": "com.example.flutter_gp5"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC4qgIbZ7iXZqOwy_WX7Bse3vRDe_ANDLU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
